@@ -216,3 +216,31 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# =============================================================================
+# Amazon ML Challenge 2026 - Competition Data & Local ML Artifacts
+# =============================================================================
+
+# Competition raw data (never commit raw datasets)
+/data/raw/
+
+# Generated outputs and submission files
+/output/*.tsv
+/output/*.zip
+!/output/.gitkeep
+
+# ML artifacts, checkpoints, models, feature stores, and intermediate indexes
+/artifacts/*
+!/artifacts/.gitkeep
+/models/
+/indexes/
+/features/
+/predictions/
+*.parquet
+*.feather
+*.joblib
+*.pkl
+
+# Explicitly ensure tracked metadata files are NOT ignored
+!/experiments/experiment_log.csv
+
