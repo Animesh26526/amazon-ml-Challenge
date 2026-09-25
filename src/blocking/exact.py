@@ -18,8 +18,9 @@ class ExactNameBlocking(BaseBlockingRule):
 
     name: str = "exact_name"
 
-    def __init__(self, country_partition: bool = False) -> None:
+    def __init__(self, country_partition: bool = False, max_candidates_per_key: int = 50) -> None:
         self.country_partition = country_partition
+        self.max_candidates_per_key = max_candidates_per_key
         self._index: Dict[str, List[str]] = defaultdict(list)
 
     def _make_key(self, name_norm: str, country: str) -> str:
@@ -33,7 +34,8 @@ class ExactNameBlocking(BaseBlockingRule):
         for rec in target_records:
             if rec.business_name_norm:
                 key = self._make_key(rec.business_name_norm, rec.country)
-                self._index[key].append(rec.entity_id)
+                if len(self._index[key]) < self.max_candidates_per_key:
+                    self._index[key].append(rec.entity_id)
 
     def query(self, query_record: NormalizedRecord) -> List[str]:
         """Query matching target IDs for the given query record."""
@@ -43,13 +45,15 @@ class ExactNameBlocking(BaseBlockingRule):
         return self._index.get(key, [])
 
 
+
 class ExactAddressBlocking(BaseBlockingRule):
     """Retrieves candidates sharing the exact normalized address."""
 
     name: str = "exact_address"
 
-    def __init__(self, country_partition: bool = False) -> None:
+    def __init__(self, country_partition: bool = False, max_candidates_per_key: int = 50) -> None:
         self.country_partition = country_partition
+        self.max_candidates_per_key = max_candidates_per_key
         self._index: Dict[str, List[str]] = defaultdict(list)
 
     def _make_key(self, address_norm: str, country: str) -> str:
@@ -63,7 +67,8 @@ class ExactAddressBlocking(BaseBlockingRule):
         for rec in target_records:
             if rec.business_address_norm:
                 key = self._make_key(rec.business_address_norm, rec.country)
-                self._index[key].append(rec.entity_id)
+                if len(self._index[key]) < self.max_candidates_per_key:
+                    self._index[key].append(rec.entity_id)
 
     def query(self, query_record: NormalizedRecord) -> List[str]:
         """Query matching target IDs for the given query record."""
@@ -78,7 +83,8 @@ class ExactNameAndAddressBlocking(BaseBlockingRule):
 
     name: str = "exact_name_address"
 
-    def __init__(self) -> None:
+    def __init__(self, max_candidates_per_key: int = 50) -> None:
+        self.max_candidates_per_key = max_candidates_per_key
         self._index: Dict[str, List[str]] = defaultdict(list)
 
     def build_index(self, target_records: Iterable[NormalizedRecord]) -> None:
@@ -87,7 +93,8 @@ class ExactNameAndAddressBlocking(BaseBlockingRule):
         for rec in target_records:
             if rec.business_name_norm and rec.business_address_norm:
                 key = f"{rec.business_name_norm}__##__{rec.business_address_norm}"
-                self._index[key].append(rec.entity_id)
+                if len(self._index[key]) < self.max_candidates_per_key:
+                    self._index[key].append(rec.entity_id)
 
     def query(self, query_record: NormalizedRecord) -> List[str]:
         """Query matching target IDs."""
@@ -95,3 +102,4 @@ class ExactNameAndAddressBlocking(BaseBlockingRule):
             return []
         key = f"{query_record.business_name_norm}__##__{query_record.business_address_norm}"
         return self._index.get(key, [])
+

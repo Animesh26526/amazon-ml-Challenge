@@ -2,7 +2,7 @@ name: Unit Tests & Interface Checks
 
 on:
   push:
-    branches: [ main, "animesh/*", "krish/*", "yash/*", "supreeti/*" ]
+    branches: [ main, "**" ]
   pull_request:
     branches: [ main ]
 

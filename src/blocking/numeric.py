@@ -17,20 +17,22 @@ class NumericAnchorBlocking(BaseBlockingRule):
 
     name: str = "numeric_anchors"
 
-    def __init__(self, max_candidates_per_key: int = 100) -> None:
+    def __init__(self, max_candidates_per_key: int = 100, country_partition: bool = False) -> None:
         self.max_candidates_per_key = max_candidates_per_key
+        self.country_partition = country_partition
         self._index: Dict[str, List[str]] = defaultdict(list)
 
     def _make_keys(self, record: NormalizedRecord) -> List[str]:
         keys = []
-        # Prefix of the name combined with numeric anchor
         name_prefix = record.business_name_norm[:4] if len(record.business_name_norm) >= 4 else ""
+        c_prefix = f"{record.country}::" if (self.country_partition and record.country) else ""
         for num in record.numeric_anchors:
-            if len(num) >= 3:  # meaningful number like house number or PIN code
+            if len(num) >= 3:
                 if name_prefix:
-                    keys.append(f"{name_prefix}#{num}")
-                keys.append(f"NUM_{num}")
+                    keys.append(f"{c_prefix}{name_prefix}#{num}")
+                keys.append(f"{c_prefix}NUM_{num}")
         return keys
+
 
     def build_index(self, target_records: Iterable[NormalizedRecord]) -> None:
         """Build index from numeric anchors."""

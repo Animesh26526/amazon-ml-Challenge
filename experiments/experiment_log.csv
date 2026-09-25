@@ -1,1 +1,2 @@
 experiment_id,date,git_commit,hypothesis,change,configuration,candidate_recall,candidate_count,precision,recall,macro_f0_5,singleton_accuracy,runtime,status,notes
+EXP001,2026-09-25,baseline-v0,Baseline classical ER: multi-pass blocking + 28 pairwise features + XGBoost GBDT,Initial full baseline pipeline,"threshold=0.67, max_cands_per_key=50, n_est=250",0.7475,415511,0.9075,0.7468,0.8477,0.9676,82.0s,VALIDATED,Baseline model trained and threshold calibrated on validation split
