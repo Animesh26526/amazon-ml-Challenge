@@ -5,13 +5,20 @@ Provides lightweight synthetic records and temporary sample files.
 
 from __future__ import annotations
 
+import sys
 import tempfile
 from pathlib import Path
 from typing import Dict, List
 
+# Ensure project root is always in sys.path when running pytest directly
+_project_root = Path(__file__).resolve().parent.parent
+if str(_project_root) not in sys.path:
+    sys.path.insert(0, str(_project_root))
+
 import pytest
 
 from src.normalization import NormalizedRecord
+
 
 
 @pytest.fixture
