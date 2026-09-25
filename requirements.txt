@@ -1,0 +1,12 @@
+# Core dependencies for Amazon ML Challenge 2026 - Business Entity Resolution
+# Phase 0 & Baseline Foundation
+
+numpy>=2.0.0
+pandas>=2.2.0
+scipy>=1.14.0
+scikit-learn>=1.5.0
+pyyaml>=6.0.0
+pytest>=8.0.0
+tqdm>=4.66.0
+xgboost>=2.0.0
+joblib>=1.4.0

@@ -1,0 +1,44 @@
+name: Repository Sanity & Compilation Check
+
+on:
+  push:
+    branches: [ main, "**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify Python Compilation / Syntax
+        run: |
+          python -m compileall src scripts tests challenge
+
+      - name: Verify Module Imports
+        run: |
+          python -c "import src; import src.io; import src.normalization; import src.blocking; import src.features; import src.model; import src.graph; import src.decision; import src.evaluation; print('All core modules imported successfully.')"
+
+      - name: Verify Configuration Syntax
+        run: |
+          python -c "import yaml; yaml.safe_load(open('configs/default.yaml'))"
+
+      - name: Verify No Competition Data Tracked
+        run: |
+          if git ls-files | grep -E '^data/raw/.*\.tsv$'; then
+            echo "ERROR: Competition raw TSV data files are tracked in Git!"
+            exit 1
+          else
+            echo "PASS: No raw competition data tracked in Git."
+          fi
