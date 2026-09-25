@@ -22,12 +22,23 @@ LEGAL_SUFFIX_MAP: Dict[str, str] = {
     "limited": "ltd",
     "private": "pvt",
     "llc": "llc",
+    "llp": "llp",
     "l.l.c.": "llc",
+    "l.l.p.": "llp",
     "corp.": "corp",
     "inc.": "inc",
     "co.": "co",
     "ltd.": "ltd",
     "pvt.": "pvt",
+    "sarl": "sarl",
+    "s.a.r.l.": "sarl",
+    "sas": "sas",
+    "s.a.s.": "sas",
+    "sa": "sa",
+    "s.a.": "sa",
+    "eurl": "eurl",
+    "sci": "sci",
+    "snc": "snc",
 }
 
 # Canonical mapping for common address component abbreviations
@@ -47,7 +58,10 @@ ADDRESS_ABBREV_MAP: Dict[str, str] = {
     "south": "s",
     "east": "e",
     "west": "w",
+    "rue": "r",
+    "chemin": "chem",
 }
+
 
 # Regex pre-compilations
 RE_NON_ALPHANUM_SPACE = re.compile(r"[^\w\s]", re.UNICODE)
@@ -159,7 +173,7 @@ def extract_char_ngrams(text: Optional[str], n: int = 3) -> Set[str]:
     return {cleaned[i : i + n] for i in range(len(cleaned) - n + 1)}
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class NormalizedRecord:
     """Multi-view representation of a business record.
 
@@ -185,6 +199,7 @@ class NormalizedRecord:
         business_name: Optional[str],
         business_address: Optional[str],
         country: Optional[str],
+        store_raw: bool = True,
     ) -> NormalizedRecord:
         """Construct multi-view record from raw input attributes."""
         raw_name = business_name or ""
@@ -200,8 +215,8 @@ class NormalizedRecord:
 
         return cls(
             entity_id=entity_id.strip(),
-            business_name_raw=raw_name,
-            business_address_raw=raw_addr,
+            business_name_raw=raw_name if store_raw else "",
+            business_address_raw=raw_addr if store_raw else "",
             country=raw_country.strip(),
             business_name_norm=norm_name,
             business_address_norm=norm_addr,

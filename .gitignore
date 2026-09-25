@@ -223,6 +223,7 @@ __marimo__/
 
 # Competition raw data (never commit raw datasets)
 /data/raw/
+/data/cache/
 
 # Generated outputs and submission files
 /output/*.tsv

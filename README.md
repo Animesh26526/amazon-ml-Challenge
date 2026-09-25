@@ -23,10 +23,10 @@ Because $F_{0.5}$ weights precision twice as heavily as recall, false merges sev
 
 ## 2. Authoritative Project Materials
 
-- **[PRD.md](file:///C:/Users/Lenovo/Desktop/Projects/Amazon%20ML%20Challenge/amazon-ml-Challenge/PRD.md)**: The authoritative engineering specification at the repository root. All design decisions, experiment ladders, and architecture principles originate here.
-- **[challenge/problem_statement.md](file:///C:/Users/Lenovo/Desktop/Projects/Amazon%20ML%20Challenge/amazon-ml-Challenge/challenge/problem_statement.md)**: Official organizer problem statement, competition rules, and evaluation format.
-- **[challenge/validate_submission.py](file:///C:/Users/Lenovo/Desktop/Projects/Amazon%20ML%20Challenge/amazon-ml-Challenge/challenge/validate_submission.py)**: Official organizer-provided submission validator (preserved unchanged).
-- **[docs/architecture.md](file:///C:/Users/Lenovo/Desktop/Projects/Amazon%20ML%20Challenge/amazon-ml-Challenge/docs/architecture.md)**: Engineering architecture, invariant definitions, and data flow.
+- **[PRD.md](PRD.md)**: The authoritative engineering specification at the repository root. All design decisions, experiment ladders, and architecture principles originate here.
+- **[challenge/problem_statement.md](challenge/problem_statement.md)**: Official organizer problem statement, competition rules, and evaluation format.
+- **[challenge/validate_submission.py](challenge/validate_submission.py)**: Official organizer-provided submission validator (preserved unchanged).
+- **[docs/architecture.md](docs/architecture.md)**: Engineering architecture, invariant definitions, and data flow.
 
 ---
 
