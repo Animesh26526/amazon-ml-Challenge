@@ -1,7 +1,7 @@
 # Amazon ML Challenge 2026 — Business Entity Resolution
 
-[![Unit Tests](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/tests.yml/badge.svg)](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/tests.yml)
-[![Repository Sanity](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/repo-check.yml/badge.svg)](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/repo-check.yml)
+[![Unit Tests](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/tests.yml)
+[![Repository Sanity](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/repo-check.yml/badge.svg?branch=main)](https://github.com/Animesh26526/amazon-ml-Challenge/actions/workflows/repo-check.yml)
 
 ## 1. Project Overview
 
@@ -66,6 +66,8 @@ amazon-ml-challenge-2026/
 ├── experiments/
 │   └── experiment_log.csv       # Tracked experiment benchmark log
 ├── tests/                       # Fast unit test suite
+├── pytest.ini                   # Pytest configuration (pythonpath = .)
+├── requirements.txt             # Pinned project dependencies
 └── .github/workflows/           # Automated CI workflows
 ```
 
@@ -103,16 +105,67 @@ Core dependencies:
 
 ## 6. Running Tests & Sanity Checks
 
-Run the automated test suite:
+The test suite is built on top of `pytest` and uses fast, self-contained synthetic fixtures in `tests/conftest.py`. It **never loads the full multi-GB competition data** and executes in under 5 seconds.
+
+### Run All Unit Tests
+Run via the standalone `pytest` executable or through Python:
 ```bash
+pytest -v tests/
+# or
 python -m pytest -v tests/
 ```
 
-Verify compilation and module imports:
+### Run Targeted Test Modules
+To test specific components during development:
+
 ```bash
-python -m compileall src scripts tests challenge
-python -c "import src; import src.io; import src.normalization; import src.blocking; import src.features; import src.model; import src.graph; import src.decision; import src.evaluation; print('OK')"
+# 1. IO, schemas, formatting, and submission invariants (predicted_matches ⊆ candidate_pairs)
+pytest -v tests/test_io.py
+
+# 2. Text normalization, Unicode cleaning, legal suffixes, address abbreviations
+pytest -v tests/test_normalization.py
+
+# 3. Candidate blocking routes (Exact, Char N-grams, TF-IDF, Soundex)
+pytest -v tests/test_blocking.py
+
+# 4. Pairwise feature engineering & explicit missing-address handling
+pytest -v tests/test_features.py
+
+# 5. Competition metrics (Macro F_0.5 formula, singleton credit/penalties, recall)
+pytest -v tests/test_metrics.py
+
+# 6. Entity-level decision engine, singletons, multi-matches, and ambiguity detection
+pytest -v tests/test_decision.py
+
+# 7. Cross-source witness scoring, triangle support, and contradiction classification
+pytest -v tests/test_graph.py
 ```
+
+### Path Resolution & `pytest.ini`
+The repository includes a `pytest.ini` file configuring:
+```ini
+[pytest]
+pythonpath = .
+testpaths = tests
+```
+Additionally, `tests/conftest.py` contains a fail-safe fallback to ensure that the repository root is placed on `sys.path` regardless of whether tests are run locally or inside a CI runner container.
+
+### Python Compilation & Import Sanity Checks
+Ensure all files compile cleanly and all internal package imports resolve:
+```bash
+# Verify Python syntax across all modules
+python -m compileall src scripts tests challenge
+
+# Verify import integrity
+python -c "import src; import src.io; import src.normalization; import src.blocking; import src.features; import src.model; import src.graph; import src.decision; import src.evaluation; print('All core modules imported successfully.')"
+```
+
+### Data Forensics Dry Run
+Inspect the schemas, headers, and file sizes of the raw competition files safely without loading them into memory:
+```bash
+python scripts/profile_data.py
+```
+
 
 ---
 
