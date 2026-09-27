@@ -1,0 +1,85 @@
+# ==============================================================================
+# Amazon ML Challenge 2026 - Business Entity Resolution Pipeline Configuration
+# Architecture: Integrated V0 -> V5 Pipeline
+# ==============================================================================
+
+paths:
+  train_dir: "data/raw/train"
+  test_dir: "data/raw/test"
+  artifact_dir: "artifacts"
+  output_dir: "output"
+  cache_dir: "artifacts/cache"
+  validator_script: "challenge/validate_submission.py"
+
+experiment:
+  name: "v5_integrated_pipeline"
+  seed: 42
+  # train_s1_sample: Set to an integer (e.g. 50000) for fast training (~2 mins)
+  # or null to use all 2.2M S1 records.
+  train_s1_sample: 60000
+  val_s1_sample: 15000
+  val_split_ratio: 0.20
+
+blocking:
+  exact_name: true
+  sorted_name: true
+  exact_address: true
+  exact_name_address: true
+  numeric_anchors: true
+  rare_tokens: true
+  char_ngram: true
+  max_candidates_per_key: 60
+  max_candidates_per_s1: 50
+  min_rare_freq: 1
+  max_rare_freq: 50
+  min_addr_len: 8
+
+features:
+  name_features: true
+  address_features: true
+  interaction_features: true
+  retrieval_provenance: true
+  reciprocal_rank: true
+  graph_witness: true
+
+model:
+  # algorithm: "lightgbm" or "xgboost"
+  algorithm: "lightgbm"
+  n_estimators: 250
+  learning_rate: 0.08
+  max_depth: 6
+  num_leaves: 31
+  subsample: 0.8
+  colsample_bytree: 0.8
+  random_state: 42
+
+hard_negatives:
+  enabled: true
+  rounds: 1
+  min_prob: 0.28
+  max_per_s1: 4
+
+decision:
+  # Base probability threshold for match acceptance
+  base_threshold: 0.46
+  # Entities with top candidate score below this are declared singletons (empty matches)
+  singleton_threshold: 0.32
+  # Maximum allowed score gap from top candidate
+  max_score_gap: 0.35
+  # Upper limit on matches per S1 entity
+  max_matches_per_s1: 10
+  # Automatically search and optimize threshold on validation set
+  tune_threshold: true
+
+graph:
+  enabled: true
+  cross_sim_threshold: 0.65
+  triangle_boost: true
+  recovery: false
+
+test_inference:
+  batch_size: 5000
+  country_partition: true
+
+cache:
+  enabled: true

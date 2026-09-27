@@ -1,0 +1,10 @@
+transformers
+datasets
+peft
+sentence-transformers
+lightgbm
+rapidfuzz
+accelerate
+torch
+torchvision
+torchaudio
